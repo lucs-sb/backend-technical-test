@@ -1,12 +1,13 @@
-using System.Text.Json;
-using System.Net.Http.Json;
+using Application.DTOs;
+using Application.Interfaces;
+using Infrastructure.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IRepositorioService, RepositorioService>();
 builder.Services.AddCors();
+builder.Services.AddApplicationDI();
 
 var app = builder.Build();
 
@@ -20,7 +21,7 @@ app.MapGet("/repos/me", async (IRepositorioService service) =>
     return Results.Ok(result);
 });
 
-app.MapPost("/favoritos", async (Favorito favorito, IRepositorioService service) =>
+app.MapPost("/favoritos", async (FavoritoDTO favorito, IRepositorioService service) =>
 {
     await service.AdicionarFavorito(favorito);
     return Results.Ok();
@@ -33,43 +34,3 @@ app.MapGet("/favoritos", async (IRepositorioService service) =>
 });
 
 app.Run();
-
-record Favorito(string Nome, string Url);
-
-interface IRepositorioService
-{
-    Task<List<object>> ListarRepositoriosDoUsuario(string usuario);
-    Task AdicionarFavorito(Favorito favorito);
-    Task<List<Favorito>> ListarFavoritos();
-}
-
-class RepositorioService : IRepositorioService
-{
-    private readonly HttpClient _http;
-
-    public RepositorioService()
-    {
-        _http = new HttpClient();
-        _http.DefaultRequestHeaders.UserAgent.ParseAdd("request");
-    }
-
-    public async Task<List<object>> ListarRepositoriosDoUsuario(string usuario)
-    {
-        // TODO
-        // Seu código aqui
-        throw new NotImplementedException("Implementar lógica para listar repositórios.");
-    }
-
-    public async Task AdicionarFavorito(Favorito favorito)
-    {
-        // TODO
-        // Seu código aqui
-    }
-
-    public async Task<List<Favorito>> ListarFavoritos()
-    {
-        // TODO
-        // Seu código aqui
-        throw new NotImplementedException("Implementar lógica para listar favoritos.");
-    }
-}
