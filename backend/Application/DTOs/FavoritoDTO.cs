@@ -1,3 +1,3 @@
 namespace Application.DTOs;
 
-public sealed record FavoritoDTO(string Nome, string Url);
+public sealed record FavoritoDTO(Guid Id, string Nome, string HtmlUrl);

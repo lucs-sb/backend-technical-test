@@ -1,8 +1,9 @@
+using Api.Models;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Options;
 using Infrastructure.IoC;
-using Microsoft.AspNetCore.Mvc;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,27 +22,27 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-app.MapGet("/repos/me", async ([FromQuery] string usuario, IRepositorioService service) =>
+app.MapGet("/repos/me", async (string usuario, IRepositorioService service) =>
 {
     var resultado = await service.ListarRepositoriosDoUsuario(usuario);
     return Results.Ok(resultado);
 });
 
-app.MapGet("/repos", async ([FromQuery] string nome, IRepositorioService service) =>
+app.MapGet("/repos", async (string nome, IRepositorioService service) =>
 {
     var resultado = await service.BuscarRepositoriosPeloNome(nome);
     return Results.Ok(resultado);
 });
 
-app.MapPost("/favoritos", async (FavoritoDTO favorito, IRepositorioService service) =>
+app.MapPost("/favoritos", async (RepositorioModel repositorioModel, IRepositorioService service) =>
 {
-    await service.AdicionarFavorito(favorito);
+    service.AdicionarFavorito(repositorioModel.Adapt<RepositorioDTO>());
     return Results.Ok();
 });
 
 app.MapGet("/favoritos", async (IRepositorioService service) =>
 {
-    var resultado = await service.ListarFavoritos();
+    var resultado = service.ListarFavoritos();
     return Results.Ok(resultado);
 });
 
