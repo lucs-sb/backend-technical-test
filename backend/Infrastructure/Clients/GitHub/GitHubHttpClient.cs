@@ -2,19 +2,20 @@ using System.Text.Json;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Options;
-using Infrastructure.Integrations.Response;
+using Infrastructure.Clients.GitHub.Response;
 using Microsoft.Extensions.Options;
 
-namespace Infrastructure.Integrations;
+namespace Infrastructure.Clients.GitHub;
 
-public sealed class GitHubIntegration : IGitHubIntegration
+public sealed class GitHubHttpClient : IGitHubHttpClient
 {
     private readonly HttpClient _httpClient;
 
-    public GitHubIntegration(HttpClient httpClient, IOptions<IntegrationOptions> integrationOptions)
+    public GitHubHttpClient(HttpClient httpClient, IOptions<HttpClientOptions> httpClientOptions)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri(integrationOptions.Value.GitHubUri);
+        _httpClient.BaseAddress = new Uri(httpClientOptions.Value.GitHubUri);
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("backend-technical-test");
     }
 
     public async Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario)
@@ -23,11 +24,11 @@ public sealed class GitHubIntegration : IGitHubIntegration
         
         response.EnsureSuccessStatusCode();
 
-        await using var contentStream = await response.Content.ReadAsStreamAsync();
+        var jsonResponse = await response.Content.ReadAsStringAsync();
         
-        var repositorios = await JsonSerializer.DeserializeAsync<List<GitHubRepositoryResponse>>(contentStream);
+        var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
 
-        var repositorioDTOs = repositorios?
+        var repositorioDTOs = repositorios?.Items
             .Select(r => new RepositorioDTO(
                 r.Nome, 
                 r.HtmlUrl, 
@@ -45,11 +46,11 @@ public sealed class GitHubIntegration : IGitHubIntegration
         
         response.EnsureSuccessStatusCode();
 
-        await using var contentStream = await response.Content.ReadAsStreamAsync();
+        var jsonResponse = await response.Content.ReadAsStringAsync();
         
-        var repositorios = await JsonSerializer.DeserializeAsync<List<GitHubRepositoryResponse>>(contentStream);
+        var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
 
-        var repositorioDTOs = repositorios?
+        var repositorioDTOs = repositorios?.Items
             .Select(r => new RepositorioDTO(
                 r.Nome, 
                 r.HtmlUrl, 

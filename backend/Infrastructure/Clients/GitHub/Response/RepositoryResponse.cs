@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Infrastructure.Integrations.Response;
+namespace Infrastructure.Clients.GitHub.Response;
 
-internal sealed record GitHubRepositoryResponse(
+internal sealed record RepositoryResponse(
     [property: JsonPropertyName("name")] string Nome,
     [property: JsonPropertyName("html_url")] string HtmlUrl,
     [property: JsonPropertyName("stargazers_count")] int QuantidadeEstrelas,
