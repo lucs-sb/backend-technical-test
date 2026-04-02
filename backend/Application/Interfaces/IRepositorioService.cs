@@ -4,7 +4,8 @@ namespace Application.Interfaces;
 
 public interface IRepositorioService
 {
-    Task<List<object>> ListarRepositoriosDoUsuario(string usuario);
+    Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario);
+    Task<List<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome);
     Task AdicionarFavorito(FavoritoDTO favoritoDTO);
     Task<List<FavoritoDTO>> ListarFavoritos();
 }

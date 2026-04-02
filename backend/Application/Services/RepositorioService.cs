@@ -5,19 +5,21 @@ namespace Application.Services;
 
 public sealed class RepositorioService : IRepositorioService
 {
-    private readonly HttpClient _http;
+    private readonly IGitHubHttpClient _gitHubHttpClient;
 
-    public RepositorioService()
+    public RepositorioService(IGitHubHttpClient gitHubHttpClient)
     {
-        _http = new HttpClient();
-        _http.DefaultRequestHeaders.UserAgent.ParseAdd("request");
+        _gitHubHttpClient = gitHubHttpClient;
     }
 
-    public async Task<List<object>> ListarRepositoriosDoUsuario(string usuario)
+    public async Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario)
     {
-        // TODO
-        // Seu código aqui
-        throw new NotImplementedException("Implementar lógica para listar repositórios.");
+        return await _gitHubHttpClient.ListarRepositoriosDoUsuario(usuario);
+    }
+
+    public async Task<List<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome)
+    {
+        return await _gitHubHttpClient.BuscarRepositoriosPeloNome(nome);
     }
 
     public async Task AdicionarFavorito(FavoritoDTO favoritoDTO)
