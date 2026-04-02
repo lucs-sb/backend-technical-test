@@ -18,6 +18,8 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddInfrastructureDI(this IServiceCollection services)
     {
+        services.AddSingleton<IRepositorioStore, RepositorioStore>();
+        
         var retryPolicy = HttpPolicyExtensions
             .HandleTransientHttpError()
             .WaitAndRetryAsync(3, retryAttempt => 
