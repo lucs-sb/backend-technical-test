@@ -1,6 +1,7 @@
 using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Rules;
 using Mapster;
 
 namespace Application.Services;
@@ -24,7 +25,14 @@ public sealed class RepositorioService : IRepositorioService
     public async Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(
         string nome, int pagina, int tamanhoPagina)
     {
-        return await _gitHubHttpClient.BuscarRepositoriosPeloNome(nome, pagina, tamanhoPagina);
+        PaginacaoResultadoDTO<Repositorio> paginacaoResultadoDTO = await _gitHubHttpClient.BuscarRepositoriosPeloNome(nome, pagina, tamanhoPagina);
+
+        List<RepositorioDTO> repositorioDTOs = paginacaoResultadoDTO.Itens
+            .OrderByDescending(RepositorioRelevanciaCalculator.CalcularRelevancia)
+            .Select(r => r.Adapt<RepositorioDTO>())
+            .ToList();
+
+        return ValueTuple.Create(paginacaoResultadoDTO, repositorioDTOs).Adapt<PaginacaoResultadoDTO<RepositorioDTO>>();
     }
 
     public void AdicionarFavorito(RepositorioDTO repositorioDTO)
@@ -36,27 +44,8 @@ public sealed class RepositorioService : IRepositorioService
     {
         return _repositorioStore
             .ListarTodos()
-            .OrderByDescending(CalcularRelevancia)
+            .OrderByDescending(RepositorioRelevanciaCalculator.CalcularRelevancia)
             .Select(f => f.Adapt<FavoritoDTO>())
             .ToList();
-    }
-
-    private static double CalcularRelevancia(Repositorio repositorio)
-    {
-        const double pesoEstrelas = 3;
-        const double pesoForks = 2;
-        const double pesoWatchers = 1;
-
-        /*
-         A relevância é calculada por média ponderada.
-         Estrelas pesam mais porque indicam aprovação geral do repositório.
-         Forks vêm em seguida por mostrarem uso mais ativo, como estudo ou contribuição.
-         Watchers têm menor peso porque indicam interesse, mas não necessariamente uso.
-        */
-        var somaPesos = pesoEstrelas + pesoForks + pesoWatchers;
-
-        return ((repositorio.QuantidadeEstrelas * pesoEstrelas)
-            + (repositorio.QuantidadeForks * pesoForks)
-            + (repositorio.QuantidadeObservadores * pesoWatchers)) / somaPesos;
     }
 }

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Options;
+using Domain.Entities;
 using Infrastructure.Clients.GitHub.Response;
 using Mapster;
 using Microsoft.Extensions.Options;
@@ -35,7 +36,7 @@ public sealed class GitHubHttpClient : IGitHubHttpClient
         return repositorioDTOs;
     }
 
-    public async Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome, int pagina, int tamanhoPagina)
+    public async Task<PaginacaoResultadoDTO<Repositorio>> BuscarRepositoriosPeloNome(string nome, int pagina, int tamanhoPagina)
     {
         var response = await _httpClient.GetAsync($"search/repositories?q={Uri.EscapeDataString(nome)}&page={pagina}&per_page={tamanhoPagina}");
         
@@ -45,16 +46,16 @@ public sealed class GitHubHttpClient : IGitHubHttpClient
         
         var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
 
-        var repositorioDTOs = repositorios?.Items
-            .Select(r => r.Adapt<RepositorioDTO>())
-            .ToList() ?? new List<RepositorioDTO>();
+        var items = repositorios?.Items
+            .Select(r => r.Adapt<Repositorio>())
+            .ToList() ?? new List<Repositorio>();
 
-        return new PaginacaoResultadoDTO<RepositorioDTO>
-        (
-            repositorios?.QuantidadeTotal ?? 0,
-            pagina,
-            tamanhoPagina,
-            repositorioDTOs
-        );
+        return new PaginacaoResultadoDTO<Repositorio>
+        {
+            TotalItens = repositorios?.QuantidadeTotal ?? 0,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina,
+            Itens = items
+        };
     }
 }

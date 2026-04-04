@@ -3,12 +3,15 @@ using Api.Models;
 using Api.Validators;
 using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappings;
 using Application.Options;
 using FluentValidation;
 using Infrastructure.IoC;
 using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
+
+MapsterConfiguration.Register();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

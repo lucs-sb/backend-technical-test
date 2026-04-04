@@ -1,8 +1,9 @@
 namespace Application.DTOs;
 
-public sealed record PaginacaoResultadoDTO<T>(
-    int TotalItens,
-    int Pagina,
-    int TamanhoPagina,
-    IReadOnlyList<T> Itens
-);
+public sealed class PaginacaoResultadoDTO<T>
+{
+    public int TotalItens { get; set; }
+    public int Pagina { get; set; }
+    public int TamanhoPagina { get; set; }
+    public List<T> Itens { get; set; } = new List<T>();
+}
