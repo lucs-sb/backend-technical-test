@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddApplicationDI();
 builder.Services.AddInfrastructureDI();
+
 builder.Services.AddScoped<IValidator<RepositorioModel>, RepositorioModelValidator>();
 
 builder.Services.Configure<HttpClientOptions>(
@@ -33,9 +34,12 @@ app.MapGet("/repos/me", async (string usuario, IRepositorioService service) =>
     return Results.Ok(resultado);
 });
 
-app.MapGet("/repos", async (string nome, IRepositorioService service) =>
+app.MapGet("/repos", async (
+    [AsParameters] BuscarRepositoriosQueryModel query,
+    IRepositorioService service) =>
 {
-    var resultado = await service.BuscarRepositoriosPeloNome(nome);
+    var resultado = await service.BuscarRepositoriosPeloNome(query.Nome, query.Pagina!.Value, query.TamanhoPagina!.Value);
+
     return Results.Ok(resultado);
 });
 

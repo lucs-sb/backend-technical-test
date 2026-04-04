@@ -21,9 +21,10 @@ public sealed class RepositorioService : IRepositorioService
         return await _gitHubHttpClient.ListarRepositoriosDoUsuario(usuario);
     }
 
-    public async Task<List<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome)
+    public async Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(
+        string nome, int pagina, int tamanhoPagina)
     {
-        return await _gitHubHttpClient.BuscarRepositoriosPeloNome(nome);
+        return await _gitHubHttpClient.BuscarRepositoriosPeloNome(nome, pagina, tamanhoPagina);
     }
 
     public void AdicionarFavorito(RepositorioDTO repositorioDTO)

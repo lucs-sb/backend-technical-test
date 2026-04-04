@@ -4,6 +4,9 @@ namespace Application.Interfaces;
 
 public interface IGitHubHttpClient
 {
-    Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario);
-    Task<List<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome);
+    Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(
+        string usuario);
+
+    Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(
+        string nome, int pagina, int tamanhoPagina);
 }

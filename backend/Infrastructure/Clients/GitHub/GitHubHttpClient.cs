@@ -3,6 +3,7 @@ using Application.DTOs;
 using Application.Interfaces;
 using Application.Options;
 using Infrastructure.Clients.GitHub.Response;
+using Mapster;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Clients.GitHub;
@@ -29,20 +30,14 @@ public sealed class GitHubHttpClient : IGitHubHttpClient
         var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
 
         var repositorioDTOs = repositorios?.Items
-            .Select(r => new RepositorioDTO(
-                r.Nome, 
-                r.HtmlUrl, 
-                r.QuantidadeEstrelas, 
-                r.QuantidadeForks, 
-                r.QuantidadeObservadores)
-            ).ToList() ?? new List<RepositorioDTO>();
+            .Select(r => r.Adapt<RepositorioDTO>()).ToList() ?? new List<RepositorioDTO>();
 
         return repositorioDTOs;
     }
 
-    public async Task<List<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome)
+    public async Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(string nome, int pagina, int tamanhoPagina)
     {
-        var response = await _httpClient.GetAsync($"search/repositories?q={Uri.EscapeDataString(nome)}");
+        var response = await _httpClient.GetAsync($"search/repositories?q={Uri.EscapeDataString(nome)}&page={pagina}&per_page={tamanhoPagina}");
         
         response.EnsureSuccessStatusCode();
 
@@ -51,14 +46,15 @@ public sealed class GitHubHttpClient : IGitHubHttpClient
         var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
 
         var repositorioDTOs = repositorios?.Items
-            .Select(r => new RepositorioDTO(
-                r.Nome, 
-                r.HtmlUrl, 
-                r.QuantidadeEstrelas, 
-                r.QuantidadeForks, 
-                r.QuantidadeObservadores)
-            ).ToList() ?? new List<RepositorioDTO>();
+            .Select(r => r.Adapt<RepositorioDTO>())
+            .ToList() ?? new List<RepositorioDTO>();
 
-        return repositorioDTOs;
+        return new PaginacaoResultadoDTO<RepositorioDTO>
+        (
+            repositorios?.QuantidadeTotal ?? 0,
+            pagina,
+            tamanhoPagina,
+            repositorioDTOs
+        );
     }
 }
