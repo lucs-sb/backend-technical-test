@@ -1,8 +1,10 @@
 using Api.Middlewares;
 using Api.Models;
+using Api.Validators;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Options;
+using FluentValidation;
 using Infrastructure.IoC;
 using Mapster;
 
@@ -13,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddApplicationDI();
 builder.Services.AddInfrastructureDI();
+builder.Services.AddScoped<IValidator<RepositorioModel>, RepositorioModelValidator>();
 
 builder.Services.Configure<HttpClientOptions>(
     builder.Configuration.GetSection(HttpClientOptions.SectionName));
@@ -36,8 +39,24 @@ app.MapGet("/repos", async (string nome, IRepositorioService service) =>
     return Results.Ok(resultado);
 });
 
-app.MapPost("/favoritos", async (RepositorioModel repositorioModel, IRepositorioService service) =>
+app.MapPost("/favoritos", async (
+    RepositorioModel repositorioModel,
+    IValidator<RepositorioModel> validator,
+    IRepositorioService service) =>
 {
+    var validationResult = await validator.ValidateAsync(repositorioModel);
+
+    if (!validationResult.IsValid)
+    {
+        var errors = validationResult.Errors
+            .GroupBy(error => error.PropertyName)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(error => error.ErrorMessage).Distinct().ToArray());
+
+        return Results.ValidationProblem(errors);
+    }
+
     service.AdicionarFavorito(repositorioModel.Adapt<RepositorioDTO>());
     return Results.Ok();
 });
