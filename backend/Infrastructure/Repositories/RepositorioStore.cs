@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using Application.Interfaces;
 using Domain.Entities;
 
-namespace Application.Services;
+namespace Infrastructure.Repositories;
 
 public class RepositorioStore : IRepositorioStore
 {

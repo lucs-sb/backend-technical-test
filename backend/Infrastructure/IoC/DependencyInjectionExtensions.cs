@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Clients.GitHub;
+using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
