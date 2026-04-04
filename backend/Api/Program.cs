@@ -1,3 +1,4 @@
+using Api.Middlewares;
 using Api.Models;
 using Application.DTOs;
 using Application.Interfaces;
@@ -21,6 +22,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.MapGet("/repos/me", async (string usuario, IRepositorioService service) =>
 {
