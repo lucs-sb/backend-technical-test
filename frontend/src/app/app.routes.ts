@@ -10,5 +10,9 @@ export const routes: Routes = [
     path: 'favoritos',
     loadComponent: () =>
       import('./pages/favoritos/favoritos.component').then(m => m.FavoritosComponent),
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];

@@ -8,7 +8,7 @@ import { FavoritoRequest } from '../models/favorito-request.model';
 @Injectable({
   providedIn: 'root'
 })
-export class FavoritosService {
+export class FavoritosApiService {
   private readonly apiUrl = `${API_BASE_URL}/favoritos`;
 
   constructor(private http: HttpClient) {}

@@ -1,8 +1,7 @@
 <div class="search-bar">
   <input
     type="text"
-    [ngModel]="termoBusca"
-    (ngModelChange)="atualizarTermoBusca($event)"
+    [formControl]="termoBuscaControl"
     placeholder="Digite o nome do repositório"
     (keyup.enter)="submeterBusca()"
   />

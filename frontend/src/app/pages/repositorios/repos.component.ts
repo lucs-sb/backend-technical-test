@@ -11,7 +11,7 @@ import { RepositoriosViewModel } from '../../models/repositorios-view.model';
 import { ReposResultsListComponent } from './components/repos-results-list/repos-results-list.component';
 import { ReposSearchFormComponent } from './components/repos-search-form/repos-search-form.component';
 import { FavoritosFacadeService } from '../../services/favoritos-facade.service';
-import { RepositorioService } from '../../services/repositorio.service';
+import { RepositorioApiService } from '../../services/repositorio-api.service';
 
 const TAMANHO_PAGINA_PADRAO = 10;
 const MENSAGEM_BUSCA_VAZIA = 'Informe um termo para buscar repositórios.';
@@ -51,7 +51,7 @@ const ESTADO_INICIAL_BUSCA: BuscaState = {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RepositoriosComponent {
-  private readonly repositorioService = inject(RepositorioService);
+  private readonly repositorioApiService = inject(RepositorioApiService);
   private readonly favoritosFacade = inject(FavoritosFacadeService);
   private readonly termoBuscaSubject = new BehaviorSubject<string>('');
   private readonly comandoBuscaSubject = new Subject<BuscaRepositoriosParams>();
@@ -60,7 +60,7 @@ export class RepositoriosComponent {
   private readonly estadoBusca$ = mergeEstadoBusca(
     this.comandoBuscaSubject,
     this.estadoManualSubject,
-    this.repositorioService
+    this.repositorioApiService
   );
 
   private readonly estadoFavoritos$ = this.favoritosFacade.state$;
@@ -135,13 +135,13 @@ export class RepositoriosComponent {
 function mergeEstadoBusca(
   comandoBusca$: Subject<BuscaRepositoriosParams>,
   estadoManual$: Subject<BuscaState>,
-  repositorioService: RepositorioService
+  repositorioApiService: RepositorioApiService
 ) {
   return merge(
     estadoManual$,
     comandoBusca$.pipe(
       switchMap((params) =>
-        repositorioService.buscarRepositorios(params).pipe(
+        repositorioApiService.buscarRepositorios(params).pipe(
           map((resultado) => mapearSucessoBusca(resultado, params)),
           startWith(mapearCarregandoBusca(params)),
           catchError(() => of(mapearErroBusca(params)))

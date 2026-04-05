@@ -3,7 +3,7 @@ import { Observable, Subject, catchError, concatMap, map, merge, of, scan, share
 import { Favorito } from '../models/favorito.model';
 import { FavoritoRequest } from '../models/favorito-request.model';
 import { Repositorio } from '../models/repositorio.model';
-import { FavoritosService } from './favoritos.service';
+import { FavoritosApiService } from './favoritos-api.service';
 
 const MENSAGEM_SEM_FAVORITOS = 'Nenhum favorito adicionado até o momento.';
 const MENSAGEM_ERRO_FAVORITOS = 'Não foi possível carregar os favoritos agora. Tente novamente em instantes.';
@@ -32,13 +32,13 @@ const ESTADO_INICIAL_FAVORITOS: FavoritosState = {
   providedIn: 'root'
 })
 export class FavoritosFacadeService {
-  private readonly favoritosService = inject(FavoritosService);
+  private readonly favoritosApiService = inject(FavoritosApiService);
   private readonly carregarFavoritosSubject = new Subject<void>();
   private readonly favoritarSubject = new Subject<Repositorio>();
   private readonly desfavoritarSubject = new Subject<Favorito>();
 
   readonly state$ = criarEstadoFavoritos(
-    this.favoritosService,
+    this.favoritosApiService,
     this.carregarFavoritosSubject.asObservable(),
     this.favoritarSubject.asObservable(),
     this.desfavoritarSubject.asObservable()
@@ -75,14 +75,14 @@ export class FavoritosFacadeService {
 }
 
 function criarEstadoFavoritos(
-  favoritosService: FavoritosService,
+  favoritosApiService: FavoritosApiService,
   carregarFavoritos$: Observable<void>,
   favoritar$: Observable<Repositorio>,
   desfavoritar$: Observable<Favorito>
 ) {
   const favoritarResultado$ = favoritar$.pipe(
     concatMap((repositorio) =>
-      favoritosService.adicionarFavorito(mapearFavoritoRequest(repositorio)).pipe(
+      favoritosApiService.adicionarFavorito(mapearFavoritoRequest(repositorio)).pipe(
         map(() => ({ sucesso: true as const, repositorio })),
         catchError(() => of({ sucesso: false as const, repositorio }))
       )
@@ -92,7 +92,7 @@ function criarEstadoFavoritos(
 
   const desfavoritarResultado$ = desfavoritar$.pipe(
     concatMap((favorito) =>
-      favoritosService.removerFavorito(favorito.id).pipe(
+      favoritosApiService.removerFavorito(favorito.id).pipe(
         map(() => ({ sucesso: true as const, favorito })),
         catchError(() => of({ sucesso: false as const, favorito }))
       )
@@ -102,7 +102,7 @@ function criarEstadoFavoritos(
 
   const carregarFavoritosReducer$ = carregarFavoritos$.pipe(
     switchMap(() =>
-      favoritosService.listarFavoritos().pipe(
+      favoritosApiService.listarFavoritos().pipe(
         map((favoritos) => criarReducerSucessoCarregamentoFavoritos(favoritos)),
         startWith(criarReducerCarregamentoFavoritos()),
         catchError(() => of(criarReducerErroCarregamentoFavoritos()))

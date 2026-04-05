@@ -9,7 +9,7 @@ import { Repositorio } from '../models/repositorio.model';
 @Injectable({
   providedIn: 'root'
 })
-export class RepositorioService {
+export class RepositorioApiService {
   private readonly apiUrl = `${API_BASE_URL}/repos`;
 
   constructor(private http: HttpClient) {}
