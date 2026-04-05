@@ -68,4 +68,10 @@ app.MapGet("/favoritos", async (IRepositorioService service) =>
     return Results.Ok(resultado);
 });
 
+app.MapDelete("/favoritos/{id:guid}", async (Guid id, IRepositorioService service) =>
+{
+    var removido = service.RemoverFavorito(id);
+    return removido ? Results.NoContent() : Results.NotFound();
+});
+
 app.Run();

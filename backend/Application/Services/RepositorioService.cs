@@ -43,4 +43,13 @@ public sealed class RepositorioService : IRepositorioService
             .Select(f => f.Adapt<FavoritoDTO>())
             .ToList();
     }
+
+    public bool RemoverFavorito(Guid id)
+    {
+        if (_repositorioStore.BuscarPorId(id) is null)
+            return false;
+
+        _repositorioStore.RemoverPeloId(id);
+        return true;
+    }
 }

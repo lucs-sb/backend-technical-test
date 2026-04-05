@@ -173,6 +173,46 @@ public sealed class RepositorioServiceTests
         _repositorioStoreMock.Verify(store => store.ListarTodos(), Times.Once);
     }
 
+    [Test]
+    public void RemoverFavorito_QuandoRepositorioExiste_RemoveFavoritoERetornaTrue()
+    {
+        var id = Guid.NewGuid();
+        var repositorio = new RepositorioBuilder()
+            .ComNome("backend-technical-test")
+            .Build();
+
+        repositorio.Id = id;
+
+        _repositorioStoreMock
+            .Setup(store => store.BuscarPorId(id))
+            .Returns(repositorio);
+
+        _repositorioStoreMock
+            .Setup(store => store.RemoverPeloId(id));
+
+        var resultado = _sut.RemoverFavorito(id);
+
+        Assert.That(resultado, Is.True);
+        _repositorioStoreMock.Verify(store => store.BuscarPorId(id), Times.Once);
+        _repositorioStoreMock.Verify(store => store.RemoverPeloId(id), Times.Once);
+    }
+
+    [Test]
+    public void RemoverFavorito_QuandoRepositorioNaoExiste_RetornaFalseSemRemover()
+    {
+        var id = Guid.NewGuid();
+
+        _repositorioStoreMock
+            .Setup(store => store.BuscarPorId(id))
+            .Returns((Repositorio?)null);
+
+        var resultado = _sut.RemoverFavorito(id);
+
+        Assert.That(resultado, Is.False);
+        _repositorioStoreMock.Verify(store => store.BuscarPorId(id), Times.Once);
+        _repositorioStoreMock.Verify(store => store.RemoverPeloId(id), Times.Never);
+    }
+
     private static List<(string Nome, string HtmlUrl, int QuantidadeEstrelas, int QuantidadeForks, int QuantidadeObservadores)>
         ProjetarRepositorios(IEnumerable<RepositorioDTO> repositorios)
     {
