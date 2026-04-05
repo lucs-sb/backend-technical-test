@@ -8,15 +8,16 @@ namespace Tests.Domain.Rules;
 public sealed class RepositorioRelevanciaCalculatorTests
 {
     [Test]
-    public void CalcularRelevancia_QuandoMetricasValidas_RetornaMediaPonderadaEsperada()
+    public void CalcularRelevancia_QuandoMetricasValidas_RetornaMediaPonderadaLogaritmicaEsperada()
     {
         var repositorio = new RepositorioBuilder()
             .ComMetricas(60, 30, 12)
             .Build();
 
         var resultado = RepositorioRelevanciaCalculator.CalcularRelevancia(repositorio);
+        var esperado = ((Math.Log(61) * 3) + (Math.Log(31) * 2) + Math.Log(13)) / 6;
 
-        Assert.That(resultado, Is.EqualTo(42));
+        Assert.That(resultado, Is.EqualTo(esperado).Within(0.0000001));
     }
 
     [Test]
@@ -66,5 +67,17 @@ public sealed class RepositorioRelevanciaCalculatorTests
         var scoreComWatchers = RepositorioRelevanciaCalculator.CalcularRelevancia(repositorioComWatchers);
 
         Assert.That(scoreComForks, Is.GreaterThan(scoreComWatchers));
+    }
+
+    [Test]
+    public void CalcularRelevancia_QuandoExistemOutliers_AEscalaLogaritmicaReduzODominioDosValoresExtremos()
+    {
+        var repositorioPopular = new RepositorioBuilder().ComQuantidadeEstrelas(100).Build();
+        var repositorioMuitoPopular = new RepositorioBuilder().ComQuantidadeEstrelas(10000).Build();
+
+        var scorePopular = RepositorioRelevanciaCalculator.CalcularRelevancia(repositorioPopular);
+        var scoreMuitoPopular = RepositorioRelevanciaCalculator.CalcularRelevancia(repositorioMuitoPopular);
+
+        Assert.That(scoreMuitoPopular, Is.LessThan(scorePopular * 3));
     }
 }
