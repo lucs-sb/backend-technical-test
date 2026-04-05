@@ -3,12 +3,32 @@
 
   <ul>
     <li *ngFor="let repo of repositorios">
-      <a [href]="repo.htmlUrl" target="_blank" rel="noopener noreferrer">
-        {{ repo.nome }}
-      </a>
-      <span>Estrelas: {{ repo.quantidadeEstrelas }}</span>
-      <span>Forks: {{ repo.quantidadeForks }}</span>
-      <span>Observadores: {{ repo.quantidadeObservadores }}</span>
+      <div class="conteudo">
+        <a [href]="repo.htmlUrl" target="_blank" rel="noopener noreferrer">
+          {{ repo.nome }}
+        </a>
+        <span>Estrelas: {{ repo.quantidadeEstrelas }}</span>
+        <span>Forks: {{ repo.quantidadeForks }}</span>
+        <span>Observadores: {{ repo.quantidadeObservadores }}</span>
+      </div>
+
+      <button
+        *ngIf="!repo.favoritado"
+        type="button"
+        (click)="favoritarRepositorio(repo)"
+        [disabled]="repo.atualizandoFavorito"
+      >
+        {{ repo.atualizandoFavorito ? 'Salvando...' : 'Favoritar' }}
+      </button>
+
+      <button
+        *ngIf="repo.favoritado && repo.favorito"
+        type="button"
+        (click)="desfavoritarRepositorio(repo.favorito)"
+        [disabled]="repo.atualizandoFavorito"
+      >
+        {{ repo.atualizandoFavorito ? 'Atualizando...' : 'Desfavoritar' }}
+      </button>
     </li>
   </ul>
 

@@ -1,0 +1,18 @@
+<ng-container *ngIf="vm$ | async as vm">
+  <div class="container">
+    <div class="header">
+      <h2>Favoritos</h2>
+      <a routerLink="/">Voltar para busca</a>
+    </div>
+
+    <p *ngIf="vm.erroAcao" class="feedback error">{{ vm.erroAcao }}</p>
+
+    <app-favoritos-list
+      [favoritos]="vm.favoritos"
+      [carregando]="vm.carregando"
+      [mensagem]="vm.mensagem"
+      [erro]="vm.erro"
+      (removerFavorito)="desfavoritar($event)"
+    />
+  </div>
+</ng-container>

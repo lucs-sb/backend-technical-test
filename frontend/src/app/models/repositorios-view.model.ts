@@ -1,9 +1,10 @@
-import { Repositorio } from './repositorio.model';
+import { FavoritoListItem } from './favorito-list-item.model';
+import { RepositorioListItem } from './repositorio-list-item.model';
 
 export interface RepositoriosViewModel {
   termoBusca: string;
   termoPesquisado: string;
-  repositorios: Repositorio[];
+  repositorios: RepositorioListItem[];
   paginaAtual: number;
   totalItens: number;
   totalPaginas: number;
@@ -11,4 +12,9 @@ export interface RepositoriosViewModel {
   carregando: boolean;
   mensagem: string;
   erro: string;
+  favoritos: FavoritoListItem[];
+  carregandoFavoritos: boolean;
+  mensagemFavoritos: string;
+  erroFavoritos: string;
+  erroAcaoFavoritos: string;
 }

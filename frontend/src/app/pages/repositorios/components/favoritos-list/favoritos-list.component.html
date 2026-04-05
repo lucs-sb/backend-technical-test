@@ -1,0 +1,21 @@
+<section class="favoritos">
+  <div class="cabecalho">
+    <h3>Favoritos</h3>
+    <span *ngIf="carregando">Carregando...</span>
+  </div>
+
+  <p *ngIf="mensagem" class="feedback">{{ mensagem }}</p>
+  <p *ngIf="erro" class="feedback error">{{ erro }}</p>
+
+  <ul *ngIf="favoritos.length > 0">
+    <li *ngFor="let favorito of favoritos">
+      <a [href]="favorito.htmlUrl" target="_blank" rel="noopener noreferrer">
+        {{ favorito.nome }}
+      </a>
+
+      <button type="button" (click)="remover(favorito)" [disabled]="favorito.atualizando">
+        {{ favorito.atualizando ? 'Removendo...' : 'Desfavoritar' }}
+      </button>
+    </li>
+  </ul>
+</section>

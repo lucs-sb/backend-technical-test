@@ -6,10 +6,17 @@
 
 .resultados li {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid #d0d5dd;
+}
+
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .resultados a {

@@ -1,6 +1,9 @@
 <ng-container *ngIf="vm$ | async as vm">
   <div class="container">
-    <h2>Buscar Repositórios</h2>
+    <div class="header">
+      <h2>Buscar Repositórios</h2>
+      <a routerLink="/favoritos">Ver favoritos</a>
+    </div>
 
     <app-repos-search-form
       [termoBusca]="vm.termoBusca"
@@ -11,6 +14,7 @@
 
     <p *ngIf="vm.mensagem" class="feedback">{{ vm.mensagem }}</p>
     <p *ngIf="vm.erro" class="feedback error">{{ vm.erro }}</p>
+    <p *ngIf="vm.erroAcaoFavoritos" class="feedback error">{{ vm.erroAcaoFavoritos }}</p>
 
     <app-repos-results-list
       [repositorios]="vm.repositorios"
@@ -19,6 +23,8 @@
       [totalPaginas]="vm.totalPaginas"
       [carregando]="vm.carregando"
       (paginaChange)="mudarPagina($event)"
+      (favoritar)="favoritarRepositorio($event)"
+      (desfavoritar)="desfavoritarRepositorio($event)"
     />
   </div>
 </ng-container>

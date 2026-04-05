@@ -1,0 +1,52 @@
+.favoritos {
+  margin-top: 32px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.feedback {
+  margin: 12px 0;
+}
+
+.error {
+  color: #b42318;
+}
+
+ul {
+  padding: 0;
+  margin: 16px 0 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #d0d5dd;
+}
+
+a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  padding: 8px 16px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
