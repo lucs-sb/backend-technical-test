@@ -31,12 +31,6 @@ app.UseSwaggerUI();
 app.UseCors(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.MapGet("/repos/me", async (string usuario, IRepositorioService service) =>
-{
-    var resultado = await service.ListarRepositoriosDoUsuario(usuario);
-    return Results.Ok(resultado);
-});
-
 app.MapGet("/repos", async (
     [AsParameters] BuscarRepositoriosQueryModel query,
     IRepositorioService service) =>

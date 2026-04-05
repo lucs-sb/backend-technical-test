@@ -17,11 +17,6 @@ public sealed class RepositorioService : IRepositorioService
         _repositorioStore = repositorioStore;
     }
 
-    public async Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario)
-    {
-        return await _gitHubHttpClient.ListarRepositoriosDoUsuario(usuario);
-    }
-
     public async Task<PaginacaoResultadoDTO<RepositorioDTO>> BuscarRepositoriosPeloNome(
         string nome, int pagina, int tamanhoPagina)
     {

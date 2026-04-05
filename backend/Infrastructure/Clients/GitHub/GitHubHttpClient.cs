@@ -20,22 +20,6 @@ public sealed class GitHubHttpClient : IGitHubHttpClient
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("backend-technical-test");
     }
 
-    public async Task<List<RepositorioDTO>> ListarRepositoriosDoUsuario(string usuario)
-    {
-        var response = await _httpClient.GetAsync($"users/{Uri.EscapeDataString(usuario)}/repos");
-        
-        response.EnsureSuccessStatusCode();
-
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-        
-        var repositorios = JsonSerializer.Deserialize<PageResponse<RepositoryResponse>>(jsonResponse);
-
-        var repositorioDTOs = repositorios?.Items
-            .Select(r => r.Adapt<RepositorioDTO>()).ToList() ?? new List<RepositorioDTO>();
-
-        return repositorioDTOs;
-    }
-
     public async Task<PaginacaoResultadoDTO<Repositorio>> BuscarRepositoriosPeloNome(string nome, int pagina, int tamanhoPagina)
     {
         var response = await _httpClient.GetAsync($"search/repositories?q={Uri.EscapeDataString(nome)}&page={pagina}&per_page={tamanhoPagina}");
