@@ -1,0 +1,28 @@
+<div class="resultados" *ngIf="repositorios.length > 0">
+  <h3>Resultados para "{{ termoPesquisado }}"</h3>
+
+  <ul>
+    <li *ngFor="let repo of repositorios">
+      <a [href]="repo.htmlUrl" target="_blank" rel="noopener noreferrer">
+        {{ repo.nome }}
+      </a>
+      <span>Estrelas: {{ repo.quantidadeEstrelas }}</span>
+      <span>Forks: {{ repo.quantidadeForks }}</span>
+      <span>Observadores: {{ repo.quantidadeObservadores }}</span>
+    </li>
+  </ul>
+
+  <div *ngIf="totalPaginas > 1" class="paginacao">
+    <button type="button" (click)="irParaPagina(paginaAtual - 1)" [disabled]="paginaAtual === 1 || carregando">
+      Anterior
+    </button>
+    <span>Página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <button
+      type="button"
+      (click)="irParaPagina(paginaAtual + 1)"
+      [disabled]="paginaAtual === totalPaginas || carregando"
+    >
+      Próxima
+    </button>
+  </div>
+</div>

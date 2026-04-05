@@ -1,0 +1,13 @@
+<div class="search-bar">
+  <input
+    type="text"
+    [ngModel]="termoBusca"
+    (ngModelChange)="atualizarTermoBusca($event)"
+    placeholder="Digite o nome do repositório"
+    (keyup.enter)="submeterBusca()"
+  />
+
+  <button type="button" (click)="submeterBusca()" [disabled]="carregando">
+    {{ carregando ? 'Buscando...' : 'Buscar' }}
+  </button>
+</div>
