@@ -6,16 +6,22 @@ namespace Infrastructure.Repositories;
 
 public class RepositorioStore : IRepositorioStore
 {
-    private readonly ConcurrentDictionary<Guid, Repositorio> _repositorios = new();
+    private readonly ConcurrentDictionary<string, Repositorio> _repositorios = new(StringComparer.OrdinalIgnoreCase);
 
     public void Adicionar(Repositorio repositorio)
     {
-        _repositorios.TryAdd(repositorio.Id, repositorio);
+        _repositorios.TryAdd(repositorio.HtmlUrl, repositorio);
     }
 
     public Repositorio? BuscarPorId(Guid id)
     {
         return _repositorios.Values.FirstOrDefault(r => r.Id == id);
+    }
+
+    public Repositorio? BuscarPorHtmlUrl(string htmlUrl)
+    {
+        _repositorios.TryGetValue(htmlUrl, out var repositorio);
+        return repositorio;
     }
 
     public IReadOnlyCollection<Repositorio> ListarTodos()
@@ -27,7 +33,7 @@ public class RepositorioStore : IRepositorioStore
     {
         if (_repositorios.Values.FirstOrDefault(r => r.Id == id) is Repositorio repositorio)
         {
-            _repositorios.TryRemove(repositorio.Id, out _);
+            _repositorios.TryRemove(repositorio.HtmlUrl, out _);
         }
     }
 }

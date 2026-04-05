@@ -32,6 +32,9 @@ public sealed class RepositorioService : IRepositorioService
 
     public void AdicionarFavorito(RepositorioDTO repositorioDTO)
     {
+        if (_repositorioStore.BuscarPorHtmlUrl(repositorioDTO.HtmlUrl) is not null)
+            return;
+
         _repositorioStore.Adicionar(repositorioDTO.Adapt<Repositorio>());
     }
 

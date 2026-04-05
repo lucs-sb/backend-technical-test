@@ -123,6 +123,10 @@ public sealed class RepositorioServiceTests
             .Build();
 
         _repositorioStoreMock
+            .Setup(store => store.BuscarPorHtmlUrl(dto.HtmlUrl))
+            .Returns((Repositorio?)null);
+
+        _repositorioStoreMock
             .Setup(store => store.Adicionar(It.Is<Repositorio>(repositorio =>
                 repositorio.Nome == dto.Nome
                 && repositorio.HtmlUrl == dto.HtmlUrl
@@ -132,12 +136,35 @@ public sealed class RepositorioServiceTests
 
         _sut.AdicionarFavorito(dto);
 
+        _repositorioStoreMock.Verify(store => store.BuscarPorHtmlUrl(dto.HtmlUrl), Times.Once);
         _repositorioStoreMock.Verify(store => store.Adicionar(It.Is<Repositorio>(repositorio =>
             repositorio.Nome == dto.Nome
             && repositorio.HtmlUrl == dto.HtmlUrl
             && repositorio.QuantidadeEstrelas == dto.QuantidadeEstrelas
             && repositorio.QuantidadeForks == dto.QuantidadeForks
             && repositorio.QuantidadeObservadores == dto.QuantidadeObservadores)), Times.Once);
+    }
+
+    [Test]
+    public void AdicionarFavorito_QuandoHtmlUrlJaExiste_NaoAdicionaDuplicidade()
+    {
+        var dto = new RepositorioDtoBuilder()
+            .ComNome("backend-technical-test")
+            .ComMetricas(10, 5, 3)
+            .Build();
+
+        _repositorioStoreMock
+            .Setup(store => store.BuscarPorHtmlUrl(dto.HtmlUrl))
+            .Returns(new RepositorioBuilder()
+                .ComNome(dto.Nome)
+                .ComHtmlUrl(dto.HtmlUrl)
+                .ComMetricas(dto.QuantidadeEstrelas, dto.QuantidadeForks, dto.QuantidadeObservadores)
+                .Build());
+
+        _sut.AdicionarFavorito(dto);
+
+        _repositorioStoreMock.Verify(store => store.BuscarPorHtmlUrl(dto.HtmlUrl), Times.Once);
+        _repositorioStoreMock.Verify(store => store.Adicionar(It.IsAny<Repositorio>()), Times.Never);
     }
 
     [Test]
