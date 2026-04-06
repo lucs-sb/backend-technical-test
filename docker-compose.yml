@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Api/Dockerfile
+    container_name: backend-technical-test-api
+    ports:
+      - "5111:5111"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: backend-technical-test-frontend
+    depends_on:
+      - api
+    ports:
+      - "4200:4200"
