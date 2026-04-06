@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { FavoritoListItem } from '../../models/favorito-list-item.model';
 import { Favorito } from '../../models/favorito.model';
-import { FavoritosListComponent } from '../repositorios/components/favoritos-list/favoritos-list.component';
+import { FavoritosListComponent } from './components/favoritos-list/favoritos-list.component';
 import { FavoritosFacadeService } from '../../services/favoritos-facade.service';
 
 interface FavoritosPageViewModel {
